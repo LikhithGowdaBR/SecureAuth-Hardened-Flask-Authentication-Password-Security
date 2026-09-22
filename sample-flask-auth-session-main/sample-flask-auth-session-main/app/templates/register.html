@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Flask Authentication - Create a free account">
+<meta name="author" content="Flask Auth Team">
+<meta name="generator" content="Flask">
+<title>Flask Authentication - Create Account</title>
+
+<!-- CSS only -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="/static/assets/css/custom.css">
+
+<style>
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.register-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-form-card {
+    box-shadow: 0 10px 40px rgba(168, 213, 186, 0.1) !important;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-header-icon {
+    font-size: 3rem;
+    color: #a8d5ba;
+    margin-bottom: 20px;
+}
+
+.progress-bar-custom {
+    height: 0.25rem;
+}
+
+.strength-meter {
+    display: none;
+    margin-top: 10px;
+}
+
+.strength-meter.active {
+    display: block;
+}
+
+.password-strength-weak {
+    background-color: #e74c3c;
+}
+
+.password-strength-medium {
+    background-color: #f39c12;
+}
+
+.password-strength-strong {
+    background-color: #27ae60;
+}
+</style>
+
+</head>
+<body>
+
+    <main class="register-container">
+        <div class="container">
+            <div class="row align-items-center g-lg-5">
+                <!-- Left Side - Illustration -->
+                <div class="col-lg-6 text-center register-illustration d-none d-lg-block">
+                    <svg width="100%" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="400" height="400" fill="url(#registerGrad)"/>
+                        <defs>
+                            <linearGradient id="registerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#e8f4f8;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#f0e5cf;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- User Registration Icon -->
+                        <g transform="translate(80, 60)">
+                            <!-- Head -->
+                            <circle cx="100" cy="50" r="35" fill="none" stroke="#a8d5ba" stroke-width="3"/>
+                            <!-- Body -->
+                            <rect x="70" y="95" width="60" height="80" rx="10" fill="none" stroke="#7c9fb8" stroke-width="3"/>
+                            <!-- Arms -->
+                            <line x1="30" y1="120" x2="70" y2="120" stroke="#a8d5ba" stroke-width="3"/>
+                            <line x1="130" y1="120" x2="170" y2="120" stroke="#a8d5ba" stroke-width="3"/>
+                            <!-- Plus Sign (Register) -->
+                            <g transform="translate(100, 200)">
+                                <line x1="-20" y1="0" x2="20" y2="0" stroke="#7c9fb8" stroke-width="3" stroke-linecap="round"/>
+                                <line x1="0" y1="-20" x2="0" y2="20" stroke="#7c9fb8" stroke-width="3" stroke-linecap="round"/>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Right Side - Form -->
+                <div class="col-md-10 mx-auto col-lg-6">
+                    <div class="register-form-card p-4 p-md-5 border rounded-3 bg-light">
+                        <div class="form-header">
+                            <div class="form-header-icon">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h1 class="display-6 fw-bold mb-2">Join Us Today</h1>
+                            <p class="text-muted">Create your account in seconds</p>
+                        </div>
+
+                        <form method="post" action="">
+                            {{ form.hidden_tag() }}
+
+                            {% if msg %}
+                                {% if 'created' in msg or 'success' in msg.lower() %}
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle"></i> {{ msg | safe }}
+                                    </div>
+                                {% elif 'Error' in msg or 'wrong' in msg %}
+                                    <div class="alert alert-danger">
+                                        <i class="fas fa-exclamation-circle"></i> {{ msg | safe }}
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i> {{ msg | safe }}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+
+                            <div class="form-floating mb-4">
+                                {{ form.username(class="form-control", placeholder="Username") }}
+                                <label for="floatingInput"><i class="fas fa-user"></i> Username</label>
+                                <small class="form-text text-muted d-block mt-2">
+                                    <i class="fas fa-info-circle"></i> Choose a unique username
+                                </small>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                {{ form.email(class="form-control", placeholder="Email") }}
+                                <label for="floatingInput"><i class="fas fa-envelope"></i> Email Address</label>
+                                <small class="form-text text-muted d-block mt-2">
+                                    <i class="fas fa-info-circle"></i> We'll never share your email
+                                </small>
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                {{ form.password(class="form-control", type="password", placeholder="Password", id="passwordInput") }}
+                                <label for="floatingPassword"><i class="fas fa-key"></i> Password</label>
+                                <div class="strength-meter" id="strengthMeter">
+                                    <div class="progress">
+                                        <div id="strengthBar" class="progress-bar progress-bar-custom" role="progressbar"></div>
+                                    </div>
+                                    <small id="strengthText" class="form-text text-muted d-block mt-2"></small>
+                                </div>
+                                <small class="form-text text-muted d-block mt-2">
+                                    <i class="fas fa-lock"></i> Use a strong password (min. 8 characters)
+                                </small>
+                            </div>
+
+                            <button class="w-100 btn btn-lg btn-primary mb-3" type="submit">
+                                <i class="fas fa-check"></i> Create Account
+                            </button>
+
+                            <hr class="my-4">
+
+                            <div class="text-center">
+                                <small class="text-muted">
+                                    Already have an account? 
+                                    <a href="{{ url_for('login') }}" class="fw-bold">
+                                        <i class="fas fa-sign-in-alt"></i> Sign in
+                                    </a>
+                                </small>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Security Info -->
+                    <div class="alert alert-info mt-4" style="background: linear-gradient(135deg, rgba(124, 159, 184, 0.1), rgba(124, 159, 184, 0.05)); border-left: 4px solid #7c9fb8;">
+                        <i class="fas fa-shield-alt"></i> <strong>Your data is secure</strong>
+                        <br><small>Passwords are encrypted using industry-standard bcrypt hashing.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Password strength checker
+        const passwordInput = document.getElementById('passwordInput');
+        const strengthMeter = document.getElementById('strengthMeter');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                
+                if (password.length === 0) {
+                    strengthMeter.classList.remove('active');
+                    return;
+                }
+
+                strengthMeter.classList.add('active');
+
+                let strength = 0;
+                
+                if (password.length >= 8) strength++;
+                if (password.length >= 12) strength++;
+                if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+                if (/\d/.test(password)) strength++;
+                if (/[^a-zA-Z\d]/.test(password)) strength++;
+
+                strengthBar.className = 'progress-bar progress-bar-custom';
+                
+                if (strength <= 2) {
+                    strengthBar.classList.add('password-strength-weak');
+                    strengthBar.style.width = '33%';
+                    strengthText.textContent = '⚠️ Weak password - Add more characters and variety';
+                } else if (strength <= 3) {
+                    strengthBar.classList.add('password-strength-medium');
+                    strengthBar.style.width = '66%';
+                    strengthText.textContent = '📊 Medium strength - Good password';
+                } else {
+                    strengthBar.classList.add('password-strength-strong');
+                    strengthBar.style.width = '100%';
+                    strengthText.textContent = '✅ Strong password - Great choice!';
+                }
+            });
+        }
+    </script>
+      
+</body>
+</html>

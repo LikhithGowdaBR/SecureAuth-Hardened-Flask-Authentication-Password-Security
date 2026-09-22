@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+<meta name="generator" content="Hugo 0.88.1">
+<title>Verify Code | Flask Authentication</title>
+
+<!-- CSS only -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/assets/css/custom.css">
+
+<style>
+    .code-input {
+        font-size: 32px;
+        font-weight: bold;
+        letter-spacing: 10px;
+        text-align: center;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .code-display {
+        background-color: #f0f0f0;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        text-align: center;
+    }
+</style>
+
+</head>
+<body>
+
+    <main>
+
+        <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+            <div class="row align-items-center g-lg-5 py-5">
+                <div class="col-lg-7 text-center text-lg-start">
+                    <h1 class="display-4 fw-bold lh-1 mb-3">
+                        Verify Your Code
+                    </h1>
+                    <p class="col-lg-10 fs-4">
+                        Enter the six-digit code we sent to <strong>{{ email }}</strong>
+                    </p>
+                </div>
+                <div class="col-md-10 mx-auto col-lg-5">
+
+                    <form method="post" action="" class="p-4 p-md-5 border rounded-3 bg-light">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        {% if msg %}
+                            <div class="alert {% if success %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                                {{ msg | safe }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Check your email for the six-digit code</p>
+                        {% endif %}
+
+                        <br />
+
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" name="email" value="{{ email or '' }}" placeholder="name@example.com" required autocomplete="email">
+                            <label for="email">Email address</label>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="code" class="form-label fw-bold">Enter Six-Digit Code</label>
+                            <input type="text" 
+                                   class="form-control code-input" 
+                                   id="code" 
+                                   name="code" 
+                                   placeholder="0 0 0 0" 
+                                   maxlength="6" 
+                                   inputmode="numeric"
+                                   pattern="[0-9]{6}"
+                                   required
+                                   autofocus
+                                   autocomplete="off">
+                            <small class="text-muted d-block mt-2">Enter the 6 digits without spaces</small>
+                        </div>
+
+                        <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <strong>Security note:</strong> Codes are sent only to your configured email address.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <div class="mb-3 text-muted small">
+                            <strong>⏱️ Code Validity:</strong> The code expires in 10 minutes
+                            <br/>
+                            <strong>🔐 Attempts:</strong> You have 3 attempts before the code is locked
+                        </div>
+
+                        <br />
+
+                        <button class="w-100 btn btn-lg btn-primary" type="submit">Verify Code</button>
+
+                        <hr class="my-4">
+                        <small class="text-muted">
+                            Didn't receive the code? <a href="/forgot-password">Request a new code</a>
+                        </small>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Only allow numbers in the input field
+        document.getElementById('code').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+        });
+        
+        // Auto-submit when 4 digits are entered
+        document.getElementById('code').addEventListener('input', function(e) {
+            if (this.value.length === 6) {
+                // Uncomment below to auto-submit when 4 digits entered
+                // document.querySelector('form').submit();
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Flask Authentication - Secure login and registration">
+<meta name="author" content="Flask Auth Team">
+<meta name="generator" content="Flask">
+<title>Flask Authentication | Secure & Simple</title>
+
+<!-- CSS only -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="/static/assets/css/custom.css">
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, rgba(124, 159, 184, 0.05) 0%, rgba(168, 213, 186, 0.05) 100%);
+    padding: 60px 0;
+    border-radius: 15px;
+    margin-bottom: 40px;
+}
+
+.feature-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f5f9fc 100%);
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(124, 159, 184, 0.2);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    color: #7c9fb8;
+    margin-bottom: 20px;
+}
+
+.divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #7c9fb8, #a8d5ba);
+    margin: 20px auto;
+    border-radius: 2px;
+}
+</style>
+
+</head>
+<body>
+
+    {% include 'navigation.html' %}
+
+    <main>
+        <div class="container">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 text-center text-lg-start mb-5 mb-lg-0">
+                        <div style="display: flex; justify-content: center; justify-content-lg: flex-start; margin-bottom: 30px;">
+                            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="40" cy="40" r="35" stroke="#7c9fb8" stroke-width="2"/>
+                                <path d="M35 40C35 37.24 37.24 35 40 35C42.76 35 45 37.24 45 40V50C45 52.76 42.76 55 40 55C37.24 55 35 52.76 35 50V40Z" fill="#7c9fb8"/>
+                                <rect x="32" y="25" width="16" height="8" rx="2" fill="#a8d5ba"/>
+                            </svg>
+                        </div>
+                        <h1 class="display-5 fw-bold mb-4">Secure Authentication</h1>
+                        <p class="lead">Modern, secure, and simple authentication system built with Flask. Protect your application with industry-standard security practices.</p>
+                        {% if current_user.is_authenticated %}
+                            <div class="alert alert-success d-inline-block mt-4">
+                                <i class="fas fa-check-circle"></i> Logged in as: <strong>{{ current_user.email }}</strong>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-6">
+                        <svg width="100%" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background -->
+                            <rect width="400" height="300" fill="url(#grad)"/>
+                            <defs>
+                                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#e8f4f8;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#f0e5cf;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <!-- Lock Icon -->
+                            <g transform="translate(150, 80)">
+                                <rect x="10" y="40" width="80" height="60" rx="5" fill="none" stroke="#7c9fb8" stroke-width="2"/>
+                                <path d="M 25 40 V 30 Q 25 15 40 15 Q 55 15 55 30 V 40" fill="none" stroke="#7c9fb8" stroke-width="2"/>
+                                <circle cx="50" cy="65" r="5" fill="#a8d5ba"/>
+                            </g>
+                            <!-- Text -->
+                            <text x="200" y="200" text-anchor="middle" font-size="16" fill="#7c9fb8" font-weight="bold">Your data is secure</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            {% if current_user.is_authenticated %}
+                <div class="row justify-content-center mb-5">
+                    <div class="col-auto">
+                        <a href="/logout" class="btn btn-primary btn-lg" style="padding: 15px 40px; font-size: 1.1rem;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row justify-content-center mb-5 gap-3">
+                    <div class="col-auto">
+                        <a href="/login" class="btn btn-primary btn-lg" style="padding: 15px 40px; font-size: 1.1rem;">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <a href="/register" class="btn btn-outline-secondary btn-lg" style="padding: 15px 40px; font-size: 1.1rem;">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Feature Cards -->
+            <div class="row g-4 mt-5">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="divider"></div>
+                        <h5 class="fw-bold mb-3">Secure</h5>
+                        <p>Industry-standard encryption with bcrypt password hashing</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="divider"></div>
+                        <h5 class="fw-bold mb-3">Open Source</h5>
+                        <p>Fully open-source Flask application for your inspection</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="divider"></div>
+                        <h5 class="fw-bold mb-3">Easy to Use</h5>
+                        <p>Simple and intuitive UI for seamless user experience</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'footer.html' %}
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+      
+</body>
+</html>
